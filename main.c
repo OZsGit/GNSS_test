@@ -20,21 +20,19 @@
 
 #include "myriota_user_api.h"
 
-void AppInit() {}
 
-int BoardStart() {
-  while (1) {
-    LedTurnOn();
-    printf("Led On\n");
-    Sleep(1);
-    LedTurnOff();
-    printf("Led Off\n");
-    Sleep(1);
-    LedToggle();
-    printf("Led On\n");
-    Sleep(1);
-    LedTurnOff();
-    printf("Led Off\n");
-    Sleep(1);
-  }
+
+static time_t Tracker(void) {
+    if (GNSSFix()) printf("Failed to get GNSS Fix, using last known fix\n");
+    if (HasValidGNSSFix()) {
+	printf("GNSS fix\n");
+    }
+    else {
+	printf("No fix\n");
+    }
+    return SecondsFromNow(3);
+}
+
+void AppInit() {
+    ScheduleJob(Tracker, ASAP()); 
 }
